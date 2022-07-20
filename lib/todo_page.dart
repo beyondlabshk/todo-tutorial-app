@@ -27,8 +27,10 @@ class _TodoPageState extends State<TodoPage> {
       appBar: AppBar(
         title: const Text('My To do App'),
       ),
-      body: ListView(
-        children: _buildTodos(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: _buildTodos(),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
