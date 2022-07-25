@@ -4,8 +4,8 @@ class Todo {
   bool isComplete;
   String name;
   Todo({
-    this.name = '',
     this.isComplete = false,
+    this.name = '',
   });
 }
 
@@ -29,7 +29,21 @@ class _TodoPageState extends State<TodoPage> {
       ),
       body: SingleChildScrollView(
         child: Column(
-          children: _buildTodos(),
+          children: [
+            for (int index = 0; index < todos.length; index++)
+              TodoItem(
+                name: todos[index].name,
+                isChecked: todos[index].isComplete,
+                onNameChanged: (val) {
+                  todos[index].name = val;
+                },
+                onCheckChanged: (val) {
+                  setState(() {
+                    todos[index].isComplete = val;
+                  });
+                },
+              ),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -42,31 +56,36 @@ class _TodoPageState extends State<TodoPage> {
       ),
     );
   }
+}
 
-  _buildTodos() {
-    List<Widget> todoWidgets = [];
-    todos.asMap().forEach(
-      (index, element) {
-        todoWidgets.add(
-          ListTile(
-            title: TextFormField(
-              initialValue: element.name,
-              onChanged: (val) {
-                todos[index].name = val;
-              },
-            ),
-            leading: Checkbox(
-              value: element.isComplete,
-              onChanged: (val) {
-                setState(() {
-                  todos[index].isComplete = !element.isComplete;
-                });
-              },
-            ),
-          ),
-        );
-      },
+class TodoItem extends StatelessWidget {
+  final String name;
+  final bool isChecked;
+  final Function(bool) onCheckChanged;
+  final Function(String) onNameChanged;
+  const TodoItem({
+    Key? key,
+    required this.name,
+    required this.isChecked,
+    required this.onNameChanged,
+    required this.onCheckChanged,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: TextFormField(
+        initialValue: name,
+        onChanged: (val) {
+          onNameChanged(val);
+        },
+      ),
+      leading: Checkbox(
+        value: isChecked,
+        onChanged: (val) {
+          onCheckChanged(val!);
+        },
+      ),
     );
-    return todoWidgets;
   }
 }
